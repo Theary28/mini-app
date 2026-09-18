@@ -7,7 +7,7 @@ function App() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:px-8">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-8 rounded-lg bg-white p-6 shadow-sm">
+        <header className="mb-12 rounded-lg bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="mb-2 text-sm font-medium text-gray-500">
@@ -27,6 +27,10 @@ function App() {
             <StatusBadge isAvailable={true} />
           </div>
         </header>
+
+
+
+     
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div className="space-y-6 md:col-span-2">
