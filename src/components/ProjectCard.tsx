@@ -8,7 +8,14 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
-function ProjectCard({ title, description, status, link }) {
+interface ProjectCardProps {
+  title: string
+  description: string
+  status: string
+  link: string
+}
+
+function ProjectCard({ title, description, status, link }: ProjectCardProps) {
   return (
     <Card className="transition hover:-translate-y-1 hover:shadow-md">
       <CardHeader>
@@ -23,8 +30,12 @@ function ProjectCard({ title, description, status, link }) {
       </CardHeader>
 
       <CardContent>
-        <Button asChild className="bg-blue-600 text-white hover:bg-blue-700">
-          <a href={link}>View project</a>
+        <Button
+          render={<a href={link} />}
+          nativeButton={false}
+          className="bg-blue-600 text-white hover:bg-blue-700"
+        >
+          View project
         </Button>
       </CardContent>
     </Card>
