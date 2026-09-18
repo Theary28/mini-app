@@ -1,6 +1,7 @@
 import StatusBadge from './components/StatusBadge'
 import Section from './components/Section'
 import ProjectCard from './components/ProjectCard'
+import ProductCatalog from './components/catalog/ProductCatalog'
 
 function App() {
   return (
@@ -83,6 +84,12 @@ function App() {
               </p>
             </Section>
           </aside>
+        </div>
+
+        <div className="mt-6">
+          <Section title="Mini-app: Product Catalog">
+            <ProductCatalog />
+          </Section>
         </div>
       </div>
     </main>

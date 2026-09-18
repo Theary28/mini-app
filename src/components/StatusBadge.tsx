@@ -1,4 +1,8 @@
-function StatusBadge({ isAvailable }) {
+interface StatusBadgeProps {
+  isAvailable: boolean
+}
+
+function StatusBadge({ isAvailable }: StatusBadgeProps) {
   return (
     <span
       className={
