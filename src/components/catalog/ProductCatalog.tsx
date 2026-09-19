@@ -3,15 +3,15 @@ import AddProductForm from './AddProductForm'
 import ProductItem from './ProductItem'
 import { fetchProducts } from '@/lib/fetchProducts'
 import { toPublicProduct } from '@/lib/toPublicProduct'
-import type { Product } from '@/types'
+import type { Product, ProductCardDisplay } from '@/types'
 
 type LoadStatus = 'loading' | 'ready' | 'error'
 
-// Shared by every card.
+// Shared by every card. `satisfies` makes a misspelled key a compile error.
 const cardDisplay = {
   currency: 'USD',
-  discountPrecent: 20,
-}
+  discountPercent: 20,
+} satisfies ProductCardDisplay
 
 function ProductCatalog() {
   const [products, setProducts] = useState<Product[]>([])

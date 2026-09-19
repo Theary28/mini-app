@@ -66,3 +66,54 @@ content-type check in `fetchProducts`. Next time a bad URL gets the HTML
 fallback, the error message will name the URL and the content type
 (`GET /api/… returned text/html, not JSON`) instead of the confusing parse error.
 
+## Bug 3: silent wrong value (prop name typo)
+
+**Symptom.** With the data loading again, the three sale items (Mechanical
+Keyboard, USB-C Hub, Headphones) show the red **SALE** tag but at full price:
+$89.99 instead of $71.99, with no struck-through original price. There's
+nothing in the console. No error, no warning.
+
+**Tool.** React DevTools → Components tab. I selected a `ProductItem` for a
+sale item and looked at its props.
+
+**What it showed.**
+- The props panel listed `currency: "USD"` and **`discountPrecent: 20`**,
+  and there was no `discountPercent`.
+- `ProductItem` reads `discountPercent`, so it got `undefined`, and
+  `discountPercent ?? 0` quietly turned that into "0% off".
+- The parent *was* sending 20, just under the wrong name. Only the props panel
+  shows the name a component actually received.
+- Why TypeScript missed it: the value arrives through a spread,
+  `<ProductItem {...cardDisplay} />`, and `cardDisplay` had no type annotation.
+  TypeScript only rejects a spread if it shares *no* keys with the props type.
+  This one shared `currency`, so the extra misspelled key got through.
+
+**Fix.** Rename the key to `discountPercent` and put the type check back:
+
+```ts
+const cardDisplay = {
+  currency: 'USD',
+  discountPercent: 20,
+} satisfies ProductCardDisplay
+```
+
+With `satisfies` in place, the original typo is a compile error:
+`'discountPrecent' does not exist in type 'ProductCardDisplay'. Did you mean
+to write 'discountPercent'?` (checked with `tsc`).
+
+---
+
+## Which tool caught which bug
+
+A Sources breakpoint caught the null `.map()` crash, the Network tab caught the
+mistyped URL, and React DevTools caught the misspelled prop. The console alone
+wasn't enough because it only reports the moment something throws: it couldn't
+show that `products` was `null` on the first render, or that the `SyntaxError`
+came from a 200-OK HTML page at the wrong URL, and it logs nothing at all for a
+prop that is silently `undefined`.
+
+## Audit checklist
+
+- [x] `npm run typecheck` (`tsc --noEmit`): clean after every fix commit, and on the sabotaged commit too
+- [x] No `any` anywhere in `src` (`@typescript-eslint/no-explicit-any` is `error`; `res.json()` is read as `unknown`)
+- [x] Every entry names the DevTools tool that found the bug: Sources breakpoint, Network tab, React DevTools
