@@ -3,18 +3,18 @@ import AddProductForm from './AddProductForm'
 import ProductItem from './ProductItem'
 import { fetchProducts } from '@/lib/fetchProducts'
 import { toPublicProduct } from '@/lib/toPublicProduct'
-import type { Product, ProductCardDisplay } from '@/types'
+import type { Product } from '@/types'
 
 type LoadStatus = 'loading' | 'ready' | 'error'
 
-// Shared by every card. `satisfies` makes a misspelled key a compile error.
+// Shared by every card.
 const cardDisplay = {
   currency: 'USD',
-  discountPercent: 20,
-} satisfies ProductCardDisplay
+  discountPrecent: 20,
+}
 
 function ProductCatalog() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Product[] | null>(null)
   const [status, setStatus] = useState<LoadStatus>('loading')
   const [loadError, setLoadError] = useState<string | null>(null)
   const [inStockOnly, setInStockOnly] = useState<boolean>(false)
@@ -36,19 +36,19 @@ function ProductCatalog() {
     return () => controller.abort()
   }, [])
 
-  const publicProducts = products.map(toPublicProduct)
+  const publicProducts = products!.map(toPublicProduct)
   const visibleProducts = inStockOnly
     ? publicProducts.filter((product) => product.inStock)
     : publicProducts
   const saleCount = visibleProducts.filter((product) => product.onSale).length
 
   function handleAdd(product: Product) {
-    setProducts((prev) => [...prev, product])
+    setProducts((prev) => [...prev!, product])
   }
 
   function handleToggleSale(id: string) {
     setProducts((prev) =>
-      prev.map((product) =>
+      prev!.map((product) =>
         product.id === id ? { ...product, onSale: !product.onSale } : product,
       ),
     )
