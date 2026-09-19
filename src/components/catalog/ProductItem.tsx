@@ -1,18 +1,25 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import type { Product } from '@/types'
+import type { ProductCardDisplay, PublicProduct } from '@/types'
 
-interface ProductItemProps {
-  product: Product
+interface ProductItemProps extends ProductCardDisplay {
+  product: PublicProduct
   onToggleSale: (id: string) => void
 }
 
-const priceFormat = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
+function ProductItem({
+  product,
+  onToggleSale,
+  currency,
+  discountPercent,
+}: ProductItemProps) {
+  const priceFormat = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency ?? 'USD',
+  })
+  const discount = product.onSale ? (discountPercent ?? 0) : 0
+  const finalPrice = product.price * (1 - discount / 100)
 
-function ProductItem({ product, onToggleSale }: ProductItemProps) {
   return (
     <article className="flex flex-col justify-between gap-4 rounded-lg border border-gray-200 bg-white p-4 transition hover:shadow-md">
       <div className="space-y-2">
@@ -29,11 +36,25 @@ function ProductItem({ product, onToggleSale }: ProductItemProps) {
           </Badge>
         </div>
 
+        <p className="text-sm text-gray-500">
+          {product.description ?? 'No description yet.'}
+        </p>
+
         <p className="text-lg font-semibold text-gray-900">
-          {priceFormat.format(product.price)}
+          {priceFormat.format(finalPrice)}
+          {discount > 0 && (
+            <span className="ml-2 text-sm font-normal text-gray-400 line-through">
+              {priceFormat.format(product.price)}
+            </span>
+          )}
           {product.onSale && (
             <span className="ml-2 text-xs font-medium text-red-600">SALE</span>
           )}
+        </p>
+
+        <p className="text-xs text-gray-500">
+          ★ {product.rating?.average.toFixed(1) ?? '–'} (
+          {product.rating?.count ?? 0} reviews)
         </p>
       </div>
 

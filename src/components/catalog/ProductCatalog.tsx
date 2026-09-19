@@ -2,9 +2,16 @@ import { useEffect, useState, type ChangeEvent } from 'react'
 import AddProductForm from './AddProductForm'
 import ProductItem from './ProductItem'
 import { fetchProducts } from '@/lib/fetchProducts'
-import type { Product } from '@/types'
+import { toPublicProduct } from '@/lib/toPublicProduct'
+import type { Product, ProductCardDisplay } from '@/types'
 
 type LoadStatus = 'loading' | 'ready' | 'error'
+
+// Shared by every card. `satisfies` makes a misspelled key a compile error.
+const cardDisplay = {
+  currency: 'USD',
+  discountPercent: 20,
+} satisfies ProductCardDisplay
 
 function ProductCatalog() {
   const [products, setProducts] = useState<Product[]>([])
@@ -29,9 +36,10 @@ function ProductCatalog() {
     return () => controller.abort()
   }, [])
 
+  const publicProducts = products.map(toPublicProduct)
   const visibleProducts = inStockOnly
-    ? products.filter((product) => product.inStock)
-    : products
+    ? publicProducts.filter((product) => product.inStock)
+    : publicProducts
   const saleCount = visibleProducts.filter((product) => product.onSale).length
 
   function handleAdd(product: Product) {
@@ -99,6 +107,7 @@ function ProductCatalog() {
               key={product.id}
               product={product}
               onToggleSale={handleToggleSale}
+              {...cardDisplay}
             />
           ))}
         </div>

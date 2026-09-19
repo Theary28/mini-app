@@ -1,8 +1,57 @@
 [
-  { "id": "p-1", "name": "Mechanical Keyboard", "price": 89.99, "inStock": true, "onSale": true },
-  { "id": "p-2", "name": "Wireless Mouse", "price": 24.5, "inStock": true, "onSale": false },
-  { "id": "p-3", "name": "27\" 4K Monitor", "price": 329, "inStock": false, "onSale": false },
-  { "id": "p-4", "name": "USB-C Hub", "price": 39.99, "inStock": true, "onSale": true },
-  { "id": "p-5", "name": "Noise-Cancelling Headphones", "price": 199, "inStock": false, "onSale": true },
-  { "id": "p-6", "name": "Laptop Stand", "price": 34, "inStock": true, "onSale": false }
+  {
+    "id": "p-1",
+    "name": "Mechanical Keyboard",
+    "price": 89.99,
+    "inStock": true,
+    "onSale": true,
+    "description": "Hot-swappable switches, aluminium case.",
+    "rating": { "average": 4.7, "count": 212 },
+    "supplierId": "sup-keychron"
+  },
+  {
+    "id": "p-2",
+    "name": "Wireless Mouse",
+    "price": 24.5,
+    "inStock": true,
+    "onSale": false,
+    "rating": { "average": 4.2, "count": 88 },
+    "supplierId": "sup-logi"
+  },
+  {
+    "id": "p-3",
+    "name": "27\" 4K Monitor",
+    "price": 329,
+    "inStock": false,
+    "onSale": false,
+    "description": "IPS panel, 60 Hz, USB-C with 65 W power delivery.",
+    "supplierId": "sup-dell"
+  },
+  {
+    "id": "p-4",
+    "name": "USB-C Hub",
+    "price": 39.99,
+    "inStock": true,
+    "onSale": true,
+    "description": "7-in-1: HDMI, SD, 3× USB-A, Ethernet, PD.",
+    "rating": { "average": 4.4, "count": 57 },
+    "supplierId": "sup-anker"
+  },
+  {
+    "id": "p-5",
+    "name": "Noise-Cancelling Headphones",
+    "price": 199,
+    "inStock": false,
+    "onSale": true,
+    "rating": { "average": 4.8, "count": 1034 },
+    "supplierId": "sup-sony"
+  },
+  {
+    "id": "p-6",
+    "name": "Laptop Stand",
+    "price": 34,
+    "inStock": true,
+    "onSale": false,
+    "supplierId": "sup-generic"
+  }
 ]

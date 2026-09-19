@@ -1,43 +1,47 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { hasErrors, validateProduct } from '@/lib/validateProduct'
-import type { Product, ProductFormData, ProductFormErrors } from '@/types'
+import type {
+  Product,
+  ProductDraft,
+  ProductFormData,
+  ProductFormErrors,
+} from '@/types'
 
 interface AddProductFormProps {
   onAdd: (product: Product) => void
 }
-
-const emptyForm: ProductFormData = { name: '', price: '' }
 
 function isFormField(name: string): name is keyof ProductFormData {
   return name === 'name' || name === 'price'
 }
 
 function AddProductForm({ onAdd }: AddProductFormProps) {
-  const [form, setForm] = useState<ProductFormData>(emptyForm)
+  const [draft, setDraft] = useState<ProductDraft>({})
   const [errors, setErrors] = useState<ProductFormErrors>({})
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target
     if (!isFormField(name)) return
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setDraft((prev) => ({ ...prev, [name]: value }))
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    const nextErrors = validateProduct(form)
+    const nextErrors = validateProduct(draft)
     setErrors(nextErrors)
     if (hasErrors(nextErrors)) return
 
     onAdd({
       id: crypto.randomUUID(),
-      name: form.name.trim(),
-      price: Number(form.price),
+      name: draft.name?.trim() ?? '',
+      price: Number(draft.price ?? ''),
       inStock: true,
       onSale: false,
+      supplierId: 'manual-entry',
     })
-    setForm(emptyForm)
+    setDraft({})
   }
 
   const inputClass =
@@ -57,7 +61,7 @@ function AddProductForm({ onAdd }: AddProductFormProps) {
           id="product-name"
           name="name"
           type="text"
-          value={form.name}
+          value={draft.name ?? ''}
           onChange={handleChange}
           aria-invalid={Boolean(errors.name)}
           className={`${inputClass} ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
@@ -74,7 +78,7 @@ function AddProductForm({ onAdd }: AddProductFormProps) {
           name="price"
           type="text"
           inputMode="decimal"
-          value={form.price}
+          value={draft.price ?? ''}
           onChange={handleChange}
           aria-invalid={Boolean(errors.price)}
           className={`${inputClass} ${errors.price ? 'border-red-500' : 'border-gray-300'}`}

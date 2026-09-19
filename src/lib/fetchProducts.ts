@@ -1,4 +1,4 @@
-import type { Product } from '@/types'
+import type { Product, ProductRating } from '@/types'
 
 export const PRODUCTS_URL = '/api/products.json'
 
@@ -8,6 +8,14 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 // res.json() is typed as any, so the payload comes in as unknown and has to
 // prove its shape here before the rest of the app treats it as Product[].
+function isRating(value: unknown): value is ProductRating {
+  return (
+    isRecord(value) &&
+    typeof value.average === 'number' &&
+    typeof value.count === 'number'
+  )
+}
+
 function isProduct(value: unknown): value is Product {
   return (
     isRecord(value) &&
@@ -15,7 +23,10 @@ function isProduct(value: unknown): value is Product {
     typeof value.name === 'string' &&
     typeof value.price === 'number' &&
     typeof value.inStock === 'boolean' &&
-    typeof value.onSale === 'boolean'
+    typeof value.onSale === 'boolean' &&
+    typeof value.supplierId === 'string' &&
+    (value.description === undefined || typeof value.description === 'string') &&
+    (value.rating === undefined || isRating(value.rating))
   )
 }
 

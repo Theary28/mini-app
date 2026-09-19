@@ -1,15 +1,15 @@
-import type { ProductFormData, ProductFormErrors } from '@/types'
+import type { ProductDraft, ProductFormErrors } from '@/types'
 
-// Pure function: reads the form data, returns a fresh errors object.
+// Pure function: reads the draft, returns a fresh errors object.
 // It never touches React state — the caller decides what to do with the result.
-export function validateProduct(data: ProductFormData): ProductFormErrors {
+export function validateProduct(draft: ProductDraft): ProductFormErrors {
   const errors: ProductFormErrors = {}
 
-  if (data.name.trim() === '') {
+  if ((draft.name?.trim() ?? '') === '') {
     errors.name = 'Name is required.'
   }
 
-  const price = data.price.trim()
+  const price = draft.price?.trim() ?? ''
   if (price === '') {
     errors.price = 'Price is required.'
   } else if (!Number.isFinite(Number(price))) {
