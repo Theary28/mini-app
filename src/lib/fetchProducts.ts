@@ -1,6 +1,6 @@
 import type { Product, ProductRating } from '@/types'
 
-export const PRODUCTS_URL = '/api/prodcuts.json'
+export const PRODUCTS_URL = '/api/products.json'
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -34,6 +34,12 @@ export async function fetchProducts(signal?: AbortSignal): Promise<Product[]> {
   const res = await fetch(PRODUCTS_URL, { signal })
   if (!res.ok) {
     throw new Error(`GET ${PRODUCTS_URL} failed with ${res.status}`)
+  }
+  // The Vite dev server answers unknown paths with index.html and a 200,
+  // so res.ok alone does not prove we hit the right URL.
+  const contentType = res.headers.get('content-type') ?? ''
+  if (!contentType.includes('application/json')) {
+    throw new Error(`GET ${PRODUCTS_URL} returned ${contentType || 'no content type'}, not JSON`)
   }
 
   const body: unknown = await res.json()
