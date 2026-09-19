@@ -9,12 +9,17 @@ interface AddProductFormProps {
 
 const emptyForm: ProductFormData = { name: '', price: '' }
 
+function isFormField(name: string): name is keyof ProductFormData {
+  return name === 'name' || name === 'price'
+}
+
 function AddProductForm({ onAdd }: AddProductFormProps) {
   const [form, setForm] = useState<ProductFormData>(emptyForm)
   const [errors, setErrors] = useState<ProductFormErrors>({})
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target
+    if (!isFormField(name)) return
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 

@@ -1,12 +1,33 @@
-import { useState, type ChangeEvent } from 'react'
+import { useEffect, useState, type ChangeEvent } from 'react'
 import AddProductForm from './AddProductForm'
 import ProductItem from './ProductItem'
-import { initialProducts } from '@/data/products'
+import { fetchProducts } from '@/lib/fetchProducts'
 import type { Product } from '@/types'
 
+type LoadStatus = 'loading' | 'ready' | 'error'
+
 function ProductCatalog() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
-  const [inStockOnly, setInStockOnly] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [status, setStatus] = useState<LoadStatus>('loading')
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    fetchProducts(controller.signal)
+      .then((data) => {
+        setProducts(data)
+        setStatus('ready')
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return
+        setLoadError(error instanceof Error ? error.message : String(error))
+        setStatus('error')
+      })
+
+    return () => controller.abort()
+  }, [])
 
   const visibleProducts = inStockOnly
     ? products.filter((product) => product.inStock)
@@ -57,7 +78,21 @@ function ProductCatalog() {
         </label>
       </div>
 
-      {visibleProducts.length > 0 ? (
+      {status === 'loading' && (
+        <p className="text-sm text-gray-500">Loading products…</p>
+      )}
+
+      {status === 'error' && (
+        <p role="alert" className="text-sm text-red-600">
+          Could not load products: {loadError}
+        </p>
+      )}
+
+      {status === 'ready' && visibleProducts.length === 0 && (
+        <p className="text-sm text-gray-500">No products match this filter.</p>
+      )}
+
+      {visibleProducts.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visibleProducts.map((product) => (
             <ProductItem
@@ -67,8 +102,6 @@ function ProductCatalog() {
             />
           ))}
         </div>
-      ) : (
-        <p className="text-sm text-gray-500">No products match this filter.</p>
       )}
     </div>
   )
