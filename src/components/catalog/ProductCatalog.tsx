@@ -14,7 +14,7 @@ const cardDisplay = {
 }
 
 function ProductCatalog() {
-  const [products, setProducts] = useState<Product[] | null>(null)
+  const [products, setProducts] = useState<Product[]>([])
   const [status, setStatus] = useState<LoadStatus>('loading')
   const [loadError, setLoadError] = useState<string | null>(null)
   const [inStockOnly, setInStockOnly] = useState<boolean>(false)
@@ -36,19 +36,19 @@ function ProductCatalog() {
     return () => controller.abort()
   }, [])
 
-  const publicProducts = products!.map(toPublicProduct)
+  const publicProducts = products.map(toPublicProduct)
   const visibleProducts = inStockOnly
     ? publicProducts.filter((product) => product.inStock)
     : publicProducts
   const saleCount = visibleProducts.filter((product) => product.onSale).length
 
   function handleAdd(product: Product) {
-    setProducts((prev) => [...prev!, product])
+    setProducts((prev) => [...prev, product])
   }
 
   function handleToggleSale(id: string) {
     setProducts((prev) =>
-      prev!.map((product) =>
+      prev.map((product) =>
         product.id === id ? { ...product, onSale: !product.onSale } : product,
       ),
     )
